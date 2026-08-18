@@ -1,6 +1,7 @@
 package br.com.fiap.carsaleapi.domain.comments;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,11 +21,13 @@ public class CommentsController {
         return commentService.getAllComments().stream().map(CommentResponse::fromModel).toList();
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping
     public Comment createComment(@RequestBody CommentRequest commentRequest) {
         return commentService.createComment(commentRequest.toModel());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteComment(@PathVariable Long id) {
